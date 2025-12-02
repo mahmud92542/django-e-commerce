@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    types: [opened, synchronize, reopened]
+
 jobs:
   sonarqube:
     name: SonarQube
@@ -24,8 +23,8 @@ jobs:
       - name: Install Dependencies & Coverage Tools
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt # Assuming you have this file
-          pip install pytest pytest-cov # Install the testing and coverage tools
+          pip3 install -r requirements.txt # Assuming you have this file
+          pip3 install pytest pytest-cov # Install the testing and coverage tools
 
       - name: Run Tests and Generate Coverage Report
         run: |
