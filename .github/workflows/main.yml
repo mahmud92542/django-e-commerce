@@ -13,8 +13,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
+
+      # --- START: NEW STEPS FOR COVERAGE ---
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x' # Use a specific version like '3.11' or '3.x'
+
+      - name: Install Dependencies & Coverage Tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt # Assuming you have this file
+          pip install pytest pytest-cov # Install the testing and coverage tools
+
+      - name: Run Tests and Generate Coverage Report
+        run: |
+          # The key is '--cov-report=xml' which creates the 'coverage.xml' file
+          pytest --cov=. --cov-report=xml
+      # --- END: NEW STEPS FOR COVERAGE ---
+
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
+        with:
+          # Use 'args' to pass scanner properties directly.
+          # This tells SonarScanner the location of the report.
+          args: >
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+            -Dsonar.tests=tests/
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
